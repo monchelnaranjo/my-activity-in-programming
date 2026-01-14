@@ -1,0 +1,39 @@
+package monchelproject;
+
+public class Appointment {
+
+    private String appointmentId;
+    private String patientName;
+    private String doctorName;
+    private String appointmentDate;
+    private String phone;
+
+    public Appointment(String appointmentId, String patientName,
+                       String doctorName, String appointmentDate, String phone) {
+        this.appointmentId = appointmentId;
+        this.patientName = patientName;
+        this.doctorName = doctorName;
+        this.appointmentDate = appointmentDate;
+        this.phone = phone;
+    }
+
+    public String getAppointmentId() {
+        return appointmentId;
+    }
+
+    public String getPatientName() {
+        return patientName;
+    }
+
+    public String getDoctorName() {
+        return doctorName;
+    }
+
+    public String getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+}
