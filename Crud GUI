@@ -1,0 +1,153 @@
+package monchelproject;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+
+@SuppressWarnings("serial")
+public class HospitalAppointmentGUI extends JFrame {
+
+    private JTextField txtId, txtPatient, txtDoctor, txtDate, txtPhone;
+    private JTable table;
+    private DefaultTableModel model;
+    private AppointmentDatabase db = new AppointmentDatabase();
+
+    public HospitalAppointmentGUI() {
+
+        setTitle("Hospital Appointment Management System");
+        setSize(900, 520);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout(10, 10));
+
+        // ===== FORM PANEL =====
+        JPanel formPanel = new JPanel(new GridLayout(6, 2, 10, 10));
+        formPanel.setBorder(BorderFactory.createTitledBorder("Appointment Details"));
+
+        txtId = new JTextField();
+        txtPatient = new JTextField();
+        txtDoctor = new JTextField();
+        txtDate = new JTextField();
+        txtPhone = new JTextField();
+
+        formPanel.add(new JLabel("Appointment ID"));
+        formPanel.add(txtId);
+        formPanel.add(new JLabel("Patient Name"));
+        formPanel.add(txtPatient);
+        formPanel.add(new JLabel("Doctor Name"));
+        formPanel.add(txtDoctor);
+        formPanel.add(new JLabel("Appointment Date"));
+        formPanel.add(txtDate);
+        formPanel.add(new JLabel("Contact Number"));
+        formPanel.add(txtPhone);
+
+        JButton btnAdd = new JButton("Add");
+        JButton btnUpdate = new JButton("Update");
+
+        formPanel.add(btnAdd);
+        formPanel.add(btnUpdate);
+
+        add(formPanel, BorderLayout.WEST);
+
+        // ===== TABLE =====
+        model = new DefaultTableModel(
+                new String[]{"ID", "Patient", "Doctor", "Date", "Contact"}, 0);
+
+        table = new JTable(model);
+        table.setRowHeight(25);
+        add(new JScrollPane(table), BorderLayout.CENTER);
+
+        // ===== BUTTON PANEL =====
+        JPanel btnPanel = new JPanel();
+        JButton btnDelete = new JButton("Delete");
+        JButton btnClear = new JButton("Clear");
+
+        btnPanel.add(btnDelete);
+        btnPanel.add(btnClear);
+        add(btnPanel, BorderLayout.SOUTH);
+
+        // ===== EVENTS =====
+        btnAdd.addActionListener(e -> addAppointment());
+        btnUpdate.addActionListener(e -> updateAppointment());
+        btnDelete.addActionListener(e -> deleteAppointment());
+        btnClear.addActionListener(e -> clearFields());
+
+        table.getSelectionModel().addListSelectionListener(e -> loadSelected());
+
+        setVisible(true);
+    }
+
+    private void addAppointment() {
+        Appointment a = new Appointment(
+                txtId.getText(),
+                txtPatient.getText(),
+                txtDoctor.getText(),
+                txtDate.getText(),
+                txtPhone.getText()
+        );
+        db.addAppointment(a);
+        refreshTable();
+        clearFields();
+    }
+
+    private void updateAppointment() {
+        int row = table.getSelectedRow();
+        if (row >= 0) {
+            Appointment a = new Appointment(
+                    txtId.getText(),
+                    txtPatient.getText(),
+                    txtDoctor.getText(),
+                    txtDate.getText(),
+                    txtPhone.getText()
+            );
+            db.updateAppointment(row, a);
+            refreshTable();
+        } else {
+            JOptionPane.showMessageDialog(this, "Select a row to update");
+        }
+    }
+
+    private void deleteAppointment() {
+        int row = table.getSelectedRow();
+        if (row >= 0) {
+            db.deleteAppointment(row);
+            refreshTable();
+        }
+    }
+
+    private void loadSelected() {
+        int row = table.getSelectedRow();
+        if (row >= 0) {
+            txtId.setText(model.getValueAt(row, 0).toString());
+            txtPatient.setText(model.getValueAt(row, 1).toString());
+            txtDoctor.setText(model.getValueAt(row, 2).toString());
+            txtDate.setText(model.getValueAt(row, 3).toString());
+            txtPhone.setText(model.getValueAt(row, 4).toString());
+        }
+    }
+
+    private void refreshTable() {
+        model.setRowCount(0);
+        for (Appointment a : db.getAppointments()) {
+            model.addRow(new Object[]{
+                    a.getAppointmentId(),
+                    a.getPatientName(),
+                    a.getDoctorName(),
+                    a.getAppointmentDate(),
+                    a.getPhone()
+            });
+        }
+    }
+
+    private void clearFields() {
+        txtId.setText("");
+        txtPatient.setText("");
+        txtDoctor.setText("");
+        txtDate.setText("");
+        txtPhone.setText("");
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(HospitalAppointmentGUI::new);
+    }
+}
