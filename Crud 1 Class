@@ -1,0 +1,24 @@
+package monchelproject;
+
+import java.util.ArrayList;
+
+public class AppointmentDatabase {
+
+    private ArrayList<Appointment> appointments = new ArrayList<>();
+
+    public void addAppointment(Appointment a) {
+        appointments.add(a);
+    }
+
+    public void updateAppointment(int index, Appointment a) {
+        appointments.set(index, a);
+    }
+
+    public void deleteAppointment(int index) {
+        appointments.remove(index);
+    }
+
+    public ArrayList<Appointment> getAppointments() {
+        return appointments;
+    }
+}
